@@ -11,3 +11,7 @@
     become: true
     tags: apache
     when: install_apache
+  - role: oersi-plugin
+    become: true
+    when: install_oersi_plugin
+    tags: oersi-plugin

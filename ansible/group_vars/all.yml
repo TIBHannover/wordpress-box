@@ -3,6 +3,8 @@ wordpress_host: 192.168.98.117
 
 install_apache: true
 
+install_oersi_plugin: true  # as long as the oersi-plugin is not available in the official wordpress-plugin-repository, we install it manually via a separate role
+
 wp_title: wordpress-example
 
 wp_admin_name: admin

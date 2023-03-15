@@ -1,0 +1,33 @@
+---
+- name: permalink structure
+  # oersi-plugin needs pretty permalinks
+  command: >
+    wp-cli --allow-root --no-color --path='{{ item.path }}' rewrite structure '{{ item.permalink_structure | default("/%postname%/") }}'
+  loop: "{{ wordpress_installs }}"
+
+- name: download plugin
+  get_url:
+    url: '{{ oersi_plugin_archive_url }}'
+    dest: "{{ item.path }}/wp-content/plugins/oersi.zip"
+    owner: root
+    group: root
+    mode: 0644
+  loop: "{{ wordpress_installs }}"
+
+- name: install oersi plugin
+  command: >
+    wp-cli --allow-root --no-color --path='{{ item.path }}' --force plugin install {{ item.path }}/wp-content/plugins/oersi.zip
+  loop: "{{ wordpress_installs }}"
+
+- name: activate oersi plugin
+  command: >
+    wp-cli --allow-root --no-color --path='{{ item.path }}' plugin activate oersi
+  loop: "{{ wordpress_installs }}"
+
+# TODO add default configuration for the plugin automatically
+
+- name: add default search page
+  command: >
+    wp-cli --allow-root --no-color --path='{{ item.path }}' post create --post_type=page --post_title='OERSI search example' --post_content='[oersi_search]' --post_status=publish --page_template=page-templates/full-width.php
+  loop: "{{ wordpress_installs }}"
+
