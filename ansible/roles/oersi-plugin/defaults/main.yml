@@ -1,2 +1,6 @@
 ---
 oersi_plugin_archive_url: https://gitlab.com/TIBHannover/oer/wordpress-oersi-plugin/-/jobs/artifacts/master/download?job=build
+oersi_elasticsearch_url: https://oersi.org/resources/api/search
+oersi_elasticsearch_index_name: oer_data
+oersi_plugin_css_file_path: default.css
+oersi_plugin_fields_file_path: default-fields.json

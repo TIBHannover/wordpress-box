@@ -2,7 +2,7 @@
 - name: permalink structure
   # oersi-plugin needs pretty permalinks
   command: >
-    wp-cli --allow-root --no-color --path='{{ item.path }}' rewrite structure '{{ item.permalink_structure | default("/%postname%/") }}'
+    wp-cli --allow-root --no-color --path='{{ item.path }}' rewrite structure '{{ item.permalink_structure | default("/%postname%/") }}' --hard
   loop: "{{ wordpress_installs }}"
 
 - name: download plugin
@@ -24,10 +24,36 @@
     wp-cli --allow-root --no-color --path='{{ item.path }}' plugin activate oersi
   loop: "{{ wordpress_installs }}"
 
-# TODO add default configuration for the plugin automatically
+- set_fact:
+    oersi_options:
+      - key: oersi_plugin_css
+        keyPath: css
+        value: "{{ lookup('file', oersi_plugin_css_file_path) }}"
+      - key: oersi_plugin_elasticsSearch
+        keyPath: url
+        value: "{{ oersi_elasticsearch_url }}"
+      - key: oersi_plugin_elasticsSearch
+        keyPath: app_name
+        value: "{{ oersi_elasticsearch_index_name }}"
+      - key: oersi_plugin_elasticsSearch
+        keyPath: fields
+        value: "{{ lookup('file', oersi_plugin_fields_file_path) | to_json }}"
+        format: json
+
+- name: add oersi option
+  command: >
+    wp-cli --allow-root --no-color --path='{{ item.0.path }}' option add '{{ item.1 }}' '{}' --format=json
+  register: _check_installation_options
+  failed_when: false
+  changed_when: "'Success: Added' in _check_installation_options.stdout"
+  loop: "{{ wordpress_installs | product(oersi_options | map(attribute='key') | unique) | list }}"
+
+- name: add nested options
+  command: >
+    wp-cli --allow-root --no-color --path='{{ item.0.path }}' option patch insert '{{ item.1.key }}' '{{ item.1.keyPath }}' '{{ item.1.value }}' --format='{{ item.1.format | default("plaintext") }}'
+  loop: "{{ wordpress_installs | product(oersi_options) | list }}"
 
 - name: add default search page
   command: >
     wp-cli --allow-root --no-color --path='{{ item.path }}' post create --post_type=page --post_title='OERSI search example' --post_content='[oersi_search]' --post_status=publish --page_template=page-templates/full-width.php
   loop: "{{ wordpress_installs }}"
-
