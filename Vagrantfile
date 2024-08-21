@@ -18,8 +18,10 @@ Vagrant.configure("2") do |config|
 
   config.vm.provision "ansible_local" do |ansible|
     ansible.install = true
-    ansible.version = "latest"
     ansible.compatibility_mode = "2.0"
+    ansible.install_mode = "pip"
+    ansible.pip_install_cmd = "sudo apt update && sudo apt install python3-pip -y"
+    ansible.pip_args = "ansible-core==2.16.10 --break-system-packages"
     ansible.playbook = "ansible/playbook.yml"
     ansible.galaxy_role_file = "requirements.yml"
     ansible.verbose = "true"
