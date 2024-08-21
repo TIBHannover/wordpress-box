@@ -1,5 +1,5 @@
 ---
-- include: reverseproxy.yml
+- import_tasks: reverseproxy.yml
   when: wp_config_reverse_proxy
 
 - name: edit php config

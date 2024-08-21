@@ -1,3 +1,4 @@
 ---
-- src: oefenweb.wordpress
-  version: v4.6.29
+- name: oefenweb.wordpress
+  src: https://github.com/Oefenweb/ansible-wordpress
+  version: v4.6.35

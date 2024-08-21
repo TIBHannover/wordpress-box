@@ -22,4 +22,4 @@
     enabled: true
   become: yes
   
-- include: init-database.yml
+- import_tasks: init-database.yml
